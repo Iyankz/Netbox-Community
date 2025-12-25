@@ -1,4 +1,4 @@
-#!/bin/bash
+q#!/bin/bash
 
 # =================================================================
 # Script Auto-Install NetBox Community (Docker) - Ubuntu 22.04 & 24.04
@@ -57,7 +57,7 @@ echo "------------------------------------------------------------"
 
 echo "------------------------------------------------------------"
 echo " Buat Super User menggunakan Perintah di bawah"
-ccho "docker compose exec netbox /opt/netbox/netbox/manage.py createsuperuser"
+echo "docker compose exec netbox /opt/netbox/netbox/manage.py createsuperuser"
 echo "Akses NetBox di: http://$(hostname -I | awk '{print $1}'):8000"
 echo "Script Ini di buat oleh Iyankz dan di tata oleh Gemini"
 echo "------------------------------------------------------------"
