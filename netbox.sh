@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =================================================================
-# NetBox Auto-Install - Ubuntu 24.04 (Clean State Version)
+# NetBox Auto-Install - Core Only (Tanpa Auto-Superuser)
 # =================================================================
 
 RED='\033[0;31m'
@@ -10,7 +10,6 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# Fungsi cek error
 check_status() {
     if [ $? -ne 0 ]; then
         echo -e "${RED}[ERROR] Gagal pada langkah: $1${NC}"
@@ -18,9 +17,9 @@ check_status() {
     fi
 }
 
-echo -e "${BLUE}>>> Memulai Instalasi di Sistem Bersih...${NC}"
+echo -e "${BLUE}>>> Memulai Instalasi NetBox Community (Ubuntu 24.04)...${NC}"
 
-# 1. Update & Install Docker (Official Script)
+# 1. Update & Install Docker
 sudo apt update && sudo apt install -y curl git
 check_status "Update Repository"
 
@@ -29,7 +28,9 @@ sudo sh get-docker.sh
 check_status "Instalasi Docker"
 
 # 2. Persiapan NetBox Repository
-git clone -b release https://github.com/netbox-community/netbox-docker.git
+if [ ! -d "netbox-docker" ]; then
+    git clone -b release https://github.com/netbox-community/netbox-docker.git
+fi
 cd netbox-docker || exit
 check_status "Clone Repository"
 
@@ -47,40 +48,21 @@ sudo docker compose pull
 sudo docker compose up -d
 check_status "Docker Compose Up"
 
-# 5. Menunggu Healthcheck (Sangat Penting untuk Proxmox/VM)
-echo -e "${YELLOW}>>> Menunggu NetBox Ready (Status: Healthy)...${NC}"
-echo -e "${YELLOW}>>> Proses migrasi database sedang berjalan di latar belakang.${NC}"
-
-# Loop untuk mengecek status healthy container netbox
+# 5. Menunggu Status Healthy
+echo -e "${YELLOW}>>> Menunggu NetBox Ready (Proses migrasi database)...${NC}"
 TIMER=0
 until [ "$(sudo docker inspect --format='{{.State.Health.Status}}' netbox-docker-netbox-1 2>/dev/null)" == "healthy" ]; do
     echo -n "."
     sleep 5
     TIMER=$((TIMER+5))
-    
-    # Timeout jika lebih dari 5 menit
     if [ $TIMER -gt 300 ]; then
-        echo -e "${RED}\n[ERROR] Container tidak kunjung Healthy. Silakan cek 'docker compose logs netbox'${NC}"
+        echo -e "${RED}\n[ERROR] Service belum healthy. Cek log: docker compose logs netbox${NC}"
         exit 1
     fi
 done
 
-echo -e "\n${GREEN}[OK] NetBox sudah siap!${NC}"
-
-# 6. Pembuatan Superuser Otomatis (Fix TTY & No-Input)
-echo -e "${BLUE}>>> Membuat Superuser Default...${NC}"
-sudo docker compose exec -T -e DJANGO_SUPERUSER_PASSWORD='netboxAdmin1' netbox \
-    /opt/netbox/netbox/manage.py createsuperuser \
-    --no-input \
-    --username netboxAdmin1 \
-    --email netboxadmin1@net.id
-check_status "Pembuatan Superuser"
-
-# Selesai
+echo -e "\n${GREEN}[OK] NetBox Core sudah terinstal dan berjalan!${NC}"
 IP_ADDR=$(hostname -I | awk '{print $1}')
 echo "----------------------------------------------------"
-echo -e "${GREEN}INSTALASI SELESAI!${NC}"
-echo -e "URL      : ${BLUE}http://$IP_ADDR:8000${NC}"
-echo -e "Username : ${YELLOW}netboxAdmin1${NC}"
-echo -e "Password : ${YELLOW}netboxAdmin1${NC}"
+echo -e "Akses Dashboard : http://$IP_ADDR:8000"
 echo "----------------------------------------------------"
