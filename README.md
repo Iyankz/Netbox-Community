@@ -26,3 +26,12 @@ Anda dapat menginstal NetBox secara otomatis hanya dengan menjalankan satu baris
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/Iyankz/Netbox-Community/refs/heads/main/netbox.sh | sudo bash
+```
+## 🔑 Langkah Terakhir: Membuat Akun Admin
+Setelah script menunjukkan status SUCCESS, buatlah akun admin secara manual untuk keamanan dan menghindari error TTY:
+```bash
+cd netbox-docker
+docker compose exec -it netbox /opt/netbox/netbox/manage.py createsuperuser
+```
+## 🌐 Akses Dashboard
+Buka browser Anda dan akses: http://IP-SERVER-ANDA:8000
