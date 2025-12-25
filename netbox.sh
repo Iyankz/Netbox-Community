@@ -51,17 +51,13 @@ echo "Menunggu container siap (sekitar 30 detik)..."
 echo "------------------------------------------------------------"
 sleep 30
 
-echo "--- 7. Membuat Superuser ---"
-echo "Silakan masukkan detail admin sesuai instruksi sebelumnya:"
-echo "Username: netboxAdmin1"
-echo "Email: netboxadmin1@net.id"
-echo "Password: Sukabumi2024!"
-echo "------------------------------------------------------------"
-
-docker compose exec netbox /opt/netbox/netbox/manage.py createsuperuser
-
 echo "------------------------------------------------------------"
 echo "INSTALASI SELESAI!"
+echo "------------------------------------------------------------"
+
+echo "------------------------------------------------------------"
+echo " Buat Super User menggunakan Perintah di bawah"
+ccho "docker compose exec netbox /opt/netbox/netbox/manage.py createsuperuser"
 echo "Akses NetBox di: http://$(hostname -I | awk '{print $1}'):8000"
 echo "Script Ini di buat oleh Iyankz dan di tata oleh Gemini"
 echo "------------------------------------------------------------"
