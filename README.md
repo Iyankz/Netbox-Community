@@ -1,5 +1,5 @@
-# Netbox-Community
-  Auto Install Netbox Community
+# Netbox-Community 
+  Auto Install Netbox Community Ubuntu 22.04 & 24.04
 ##
     sudo curl -Ssl https://raw.githubusercontent.com/Iyankz/Netbox-Community/refs/heads/main/netbox.sh | sudo bash
 
