@@ -8,3 +8,7 @@
     cd netbox-docker
     sudo docker compose pull
     sudo docker compose up -d
+Untuk Mengecek LOG jika ada Kendala :
+##
+    cd netbox-docker
+    sudo docker compose logs -f netbox
