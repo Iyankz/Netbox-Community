@@ -2,13 +2,14 @@
 
 # =================================================================
 # Script Auto-Install NetBox Community (Docker) - Ubuntu 22.04 & 24.04
-# Dibuat oleh Iyankz & Gemini
+# Dibuat oleh Iyankz & Gemini (Final Version)
 # =================================================================
 
-# Pastikan script dijalankan sebagai root/sudo
+# Mengecek apakah user menjalankan dengan sudo, jika tidak maka minta akses root
 if [ "$EUID" -ne 0 ]; then 
-  echo "Silakan jalankan script ini dengan sudo!"
-  exit 1
+  echo "Script ini memerlukan hak akses root. Mengalihkan ke sudo -i..."
+  sudo -i "$0" "$@"
+  exit $?
 fi
 
 echo "--- 1. Mengatur Timezone ke Asia/Jakarta ---"
@@ -34,7 +35,7 @@ else
 fi
 
 echo "--- 5. Konfigurasi Docker Compose Override ---"
-# Menghapus 'version' untuk menghilangkan pesan WARN: attribute version is obsolete
+# Tanpa 'version' untuk menghindari Warning: attribute version is obsolete
 cat <<EOF > docker-compose.override.yml
 services:
   netbox:
@@ -42,16 +43,16 @@ services:
       - 8000:8080
 EOF
 
-echo "--- 6. Menjalankan NetBox Service ---"
+echo "--- 6. Menarik Image & Menjalankan NetBox Service ---"
 docker compose pull
 docker compose up -d
 
 echo "------------------------------------------------------------"
 echo "MENUNGGU SERVICE READY (Status Healthy)..."
-echo "Proses ini memakan waktu (Migrasi Database & Inisialisasi)."
+echo "Proses ini memakan waktu migrasi database."
 echo "------------------------------------------------------------"
 
-# Loop pengecekan status Healthy untuk menghindari error 'unhealthy'
+# Loop pengecekan status hingga Healthy
 TIMER=0
 until [ "$(docker inspect --format='{{.State.Health.Status}}' netbox-docker-netbox-1 2>/dev/null)" == "healthy" ]; do
     echo -n "."
@@ -64,12 +65,12 @@ until [ "$(docker inspect --format='{{.State.Health.Status}}' netbox-docker-netb
 done
 
 echo -e "\n------------------------------------------------------------"
-echo "INSTALASI BERHASIL!"
+echo "INSTALASI BERHASIL & SELESAI!"
 echo "------------------------------------------------------------"
 echo "Langkah Terakhir: Buat Superuser Secara Manual"
 echo "Gunakan perintah di bawah ini agar aman dari error TTY:"
 echo ""
-echo "cd netbox-docker/"
+echo "cd $(pwd)"
 echo "docker compose exec -it netbox /opt/netbox/netbox/manage.py createsuperuser"
 echo ""
 echo "Akses NetBox di: http://$(hostname -I | awk '{print $1}'):8000"
