@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =================================================================
-# Script Auto-Install NetBox Community (Docker) - Ubuntu 22.04 & 24.04
+# Script Auto-Install NetBox Community (Docker) - Ubuntu 24.04
 # =================================================================
 
 # Pastikan script dijalankan sebagai root/sudo
@@ -26,7 +26,7 @@ apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker
 
 echo "--- 4. Download NetBox Docker via Git ---"
 if [ -d "netbox-docker" ]; then
-  echo "Folder netbox-docker sudah ada, melewati proses clone..."
+  echo "Folder netbox-docker sudah ada, masuk ke folder..."
   cd netbox-docker
 else
   git clone -b release https://github.com/netbox-community/netbox-docker.git
@@ -34,8 +34,8 @@ else
 fi
 
 echo "--- 5. Konfigurasi Docker Compose Override ---"
+# Menghapus baris 'version' untuk menghindari Warning: attribute version is obsolete
 cat <<EOF > docker-compose.override.yml
-version: '3.4'
 services:
   netbox:
     ports:
@@ -47,18 +47,29 @@ docker compose pull
 docker compose up -d
 
 echo "------------------------------------------------------------"
-echo "Menunggu container siap (sekitar 30 detik)..."
+echo "Menunggu container menjadi Healthy (Proses Migrasi Database)..."
 echo "------------------------------------------------------------"
-sleep 30
 
-echo "------------------------------------------------------------"
+# Loop pengecekan status hingga Healthy (maksimal 5 menit)
+TIMER=0
+until [ "$(docker inspect --format='{{.State.Health.Status}}' netbox-docker-netbox-1 2>/dev/null)" == "healthy" ]; do
+    echo -n "."
+    sleep 5
+    TIMER=$((TIMER+5))
+    if [ $TIMER -gt 300 ]; then
+        echo -e "\n[!] Service belum healthy setelah 5 menit. Cek logs: docker compose logs netbox"
+        break
+    fi
+done
+
+echo -e "\n------------------------------------------------------------"
 echo "INSTALASI SELESAI!"
 echo "------------------------------------------------------------"
-
+echo "Langkah Terakhir: Buat Super User secara manual"
+echo "1. Masuk ke folder: cd $(pwd)"
+echo "2. Jalankan perintah: docker compose exec -it netbox /opt/netbox/netbox/manage.py createsuperuser"
+echo ""
+echo "Akses Dashboard di: http://$(hostname -I | awk '{print $1}'):8000"
 echo "------------------------------------------------------------"
-echo "Buat Super User menggunakan Perintah di bawah"
-echo "cd /netbox-docker/"
-echo "docker compose exec netbox /opt/netbox/netbox/manage.py createsuperuser"
-echo "Akses NetBox di: http://$(hostname -I | awk '{print $1}'):8000"
-echo "Script Ini di buat oleh Iyankz dan di tata oleh Gemini"
+echo "Script ini dibuat oleh Iyankz dan ditata oleh Gemini"
 echo "------------------------------------------------------------"
