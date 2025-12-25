@@ -45,13 +45,11 @@ EOF
 echo "--- 6. Menarik Image & Menjalankan NetBox ---"
 docker compose pull
 docker compose up -d
-
+cd netbox-docker/
 echo "------------------------------------------------------------"
 echo "Menunggu container siap (sekitar 30 detik)..."
 echo "------------------------------------------------------------"
 sleep 30
-
-cd netbox-docker/
 
 echo "------------------------------------------------------------"
 echo "INSTALASI SELESAI!"
