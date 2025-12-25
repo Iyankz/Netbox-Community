@@ -38,11 +38,12 @@ Buka browser Anda dan akses: http://IP-SERVER-ANDA:8000
 
 ----
 
+----
+
 ## Dibuat dengan ❤️ oleh [Iyankz](https://github.com/Iyankz) & [Gemini AI](https://gemini.google.com/)
 
-* **Iyankz** (Lead Developer)
-
-* **Gemini** (Assistant Developer)
+* **Iyankz** (Inisiator & Developer)
+* **Gemini** (AI Partner & Technical Assistant)
 
 ## ⚖️ Lisensi
 Proyek ini dilisensikan di bawah **MIT License** - lihat file [LICENSE](LICENSE) untuk detailnya.
