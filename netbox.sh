@@ -45,7 +45,7 @@ EOF
 echo "--- 6. Menarik Image & Menjalankan NetBox ---"
 docker compose pull
 docker compose up -d
-cd netbox-docker/
+
 echo "------------------------------------------------------------"
 echo "Menunggu container siap (sekitar 30 detik)..."
 echo "------------------------------------------------------------"
@@ -57,6 +57,7 @@ echo "------------------------------------------------------------"
 
 echo "------------------------------------------------------------"
 echo "Buat Super User menggunakan Perintah di bawah"
+echo "cd /netbox-docker/"
 echo "docker compose exec netbox /opt/netbox/netbox/manage.py createsuperuser"
 echo "Akses NetBox di: http://$(hostname -I | awk '{print $1}'):8000"
 echo "Script Ini di buat oleh Iyankz dan di tata oleh Gemini"
