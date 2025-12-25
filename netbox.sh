@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =================================================================
-# Script Auto-Install NetBox Community (Docker) - Ubuntu 24.04
+# Script Auto-Install NetBox Community (Docker) - Ubuntu 22.04 & 24.04
 # Dibuat oleh Iyankz & Gemini
 # =================================================================
 
